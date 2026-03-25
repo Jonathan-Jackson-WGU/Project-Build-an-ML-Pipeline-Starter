@@ -43,17 +43,27 @@ def go(config: DictConfig):
                 env_manager="conda",
                 parameters={
                     "sample": config["etl"]["sample"],
-                    "artifact_name": "sample.csv",
-                    "artifact_type": "raw_data",
-                    "artifact_description": "Raw file as downloaded"
+                    "artifact_name": config["etl"]["artifact_name"],
+                    "artifact_type": config["etl"]["artifact_type"],
+                    "artifact_description": config["etl"]["artifact_description"]
                 },
             )
 
         if "basic_cleaning" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            # Clean downloaded file and load in W&B
+            _ = mlflow.run(
+                os.path.join(hydra.utils.get_original_cwd(), "src", "basic_cleaning"),
+                "main",
+                env_manager="conda",
+                parameters={
+                    "input_artifact": f"{config['etl']['artifact_name']}:latest",
+                    "output_artifact": config["basic_cleaning"]["output_artifact"],
+                    "output_type": config["basic_cleaning"]["output_type"],
+                    "output_description": config["basic_cleaning"]["output_description"],
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"],
+                },
+            )
 
         if "data_check" in active_steps:
             ##################

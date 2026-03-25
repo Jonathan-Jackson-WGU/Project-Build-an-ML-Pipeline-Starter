@@ -7,8 +7,15 @@ main:
   steps: all
 etl:
   sample: "sample1.csv"
+  artifact_name: "sample.csv"
+  artifact_type: "raw_data"
+  artifact_description: "Raw file as downloaded"
   min_price: 10  # dollars
   max_price: 350  # dollars
+basic_cleaning:
+  output_artifact: "clean_sample.csv"
+  output_type: "clean_data"
+  output_description: "Data with outliers and missing values removed"
 data_check:
   kl_threshold: 0.2
 modeling:
