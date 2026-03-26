@@ -66,10 +66,19 @@ def go(config: DictConfig):
             )
 
         if "data_check" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            # Data checks for the basic_cleaning step
+            _ = mlflow.run(
+                os.path.join(hydra.utils.get_original_cwd(), "src", "data_check"),
+                "main",
+                env_manager="conda",
+                parameters={
+                    "csv": f"{config['basic_cleaning']['output_artifact']}:latest",
+                    "ref": f"{config['basic_cleaning']['output_artifact']}:reference",
+                    "kl_threshold": config["data_check"]["kl_threshold"],
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"],
+                },
+            )
 
         if "data_split" in active_steps:
             ##################
